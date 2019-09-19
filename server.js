@@ -10,14 +10,8 @@ var connectCounter = 0;
 
 io.on('connection', (socket)=>{
      connectCounter++;
-     console.log("server"+'New user connected'+' '+socket.id);
-     console.log("server"+" user count : "+connectCounter);
-     //emit message from server to user
-     socket.emit('newMessage', {
-          from:'jen@mds',
-          text:'hepppp',
-          createdAt:123
-     });
+     console.log("server "+'New user connected '+' '+socket.id);
+     console.log("server "+"user count: "+connectCounter);
 
      // listen for message from user
      socket.on('createMessage', (newMessage)=>{
@@ -31,8 +25,8 @@ io.on('connection', (socket)=>{
      })
 
      socket.on('new_private_message', function(data){
-          io.sockets.in(data.email).emit('new_msg_in_chat_room',{msg:data.message});
-          console.log("server"+data.email);
+          io.sockets.in(data.email).emit('updated_clip_content',{clip_content:data.clip_content});
+          console.log("server"+data.email+" updated_clip_content: "+data.clip_content);
      });
 
      // when server disconnects from user
