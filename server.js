@@ -6,8 +6,12 @@ let app = express();
 let server = http.createServer(app);
 let io = socketIO(server);
 
+var connectCounter = 0;
+
 io.on('connection', (socket)=>{
-     console.log('New user connected');
+     connectCounter++;
+     console.log("server"+'New user connected'+' '+socket.id);
+     console.log("server"+" user count : "+connectCounter);
      //emit message from server to user
      socket.emit('newMessage', {
           from:'jen@mds',
@@ -17,12 +21,25 @@ io.on('connection', (socket)=>{
 
      // listen for message from user
      socket.on('createMessage', (newMessage)=>{
-          console.log('newMessage', newMessage);
+          console.log("server"+'newMessage', newMessage);
+     });
+
+     //listen for private chat room request
+     socket.on('privatechatroom', function(data){
+          socket.join(data.email);
+          io.emit('res', {msg:'you are added'});
+     })
+
+     socket.on('new_private_message', function(data){
+          io.sockets.in(data.email).emit('new_msg_in_chat_room',{msg:data.message});
+          console.log("server"+data.email);
      });
 
      // when server disconnects from user
      socket.on('disconnect', ()=>{
-          console.log('disconnected from user');
+          connectCounter--;
+          console.log("server"+'disconnected from user');
+          console.log("server"+" user count : "+connectCounter);
      });
 });
 
