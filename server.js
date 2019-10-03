@@ -24,6 +24,12 @@ io.on('connection', (socket)=>{
           io.emit('res', {msg:'you are added'});
      })
 
+     //listen for leave chat room request
+     socket.on('leavechatroom', function(data){
+          socket.leave(data.email);
+          io.emit('res', {msg:'you left'});
+     })
+
      socket.on('new_private_message', function(data){
           io.sockets.in(data.email).emit('updated_clip_content',{clip_content:data.clip_content});
           console.log("server"+data.email+" updated_clip_content: "+data.clip_content);
